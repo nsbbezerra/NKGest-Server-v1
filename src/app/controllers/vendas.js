@@ -88,6 +88,14 @@ router.post("/createSale", async (req, res) => {
       orderNumber = getNumber[0].number + 1;
     }
 
+    if (refOrderService || refOrderService !== "") {
+      let numero = parseInt(refOrderService);
+      await OrdensServico.findOneAndUpdate(
+        { number: numero },
+        { $set: { referenced: true } }
+      );
+    }
+
     const ordem = await Ordens.create({
       client,
       funcionario,
@@ -1082,7 +1090,6 @@ router.post("/createService", async (req, res) => {
     const ordem = await OrdensServico.create({
       client,
       funcionario,
-      veicles,
       services,
       statuSales: "sale",
       desconto,
@@ -1113,6 +1120,7 @@ router.post("/createService", async (req, res) => {
       return res.status(200).send({ ordem });
     }
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .send({ message: "Erro ao concluir a ordem de serviço" });
