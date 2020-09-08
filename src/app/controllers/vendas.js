@@ -1103,7 +1103,7 @@ router.post("/createService", async (req, res) => {
       obs,
       number: orderNumber,
       address,
-      dateSave: dataCadastro,
+      dateSave: novaData,
       equipo,
       marca,
       modelo,
@@ -1207,6 +1207,11 @@ router.post("/createServiceOrca", async (req, res) => {
     valueBruto,
     obs,
     address,
+    data,
+    equipo,
+    marca,
+    modelo,
+    referencia,
   } = req.body;
   const findPlanoContas = await PlanodeContas.findOne({
     planoConta: "PRESTAÇÃO DE SERVIÇO",
@@ -1215,6 +1220,11 @@ router.post("/createServiceOrca", async (req, res) => {
     .sort({ $natural: -1 })
     .limit(1)
     .select("number");
+
+  let dateToSave = dateFns.format(new Date(data), "dd/MM/yyyy");
+  let novaData = new Date(data);
+  let novoMes = novaData.getMonth();
+  let novoAno = novaData.getFullYear();
 
   try {
     let orderNumber;
@@ -1226,9 +1236,12 @@ router.post("/createServiceOrca", async (req, res) => {
     }
 
     await OrdensServico.create({
+      createDate: dateToSave,
+      dateSave: novaData,
+      month: meses[novoMes],
+      year: novoAno,
       client,
       funcionario,
-      veicles,
       services,
       statuSales: "orca",
       desconto,
@@ -1242,10 +1255,15 @@ router.post("/createServiceOrca", async (req, res) => {
       number: orderNumber,
       obs,
       address,
+      equipo,
+      marca,
+      modelo,
+      referencia,
     });
 
     return res.status(200).send({ message: "Ordem salva com sucesso" });
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .send({ message: "Erro ao salvar a ordem de serviço" });
