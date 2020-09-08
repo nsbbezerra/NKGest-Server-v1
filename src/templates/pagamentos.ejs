@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Imprimir Venda</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        outline: none;
+        box-sizing: border-box;
+        font-family: Calibri, "Gill Sans", "Gill Sans MT", "Trebuchet MS",
+          sans-serif !important;
+      }
+      html::-webkit-scrollbar {
+        display: none;
+      }
+      .logo-container {
+        width: 100%;
+        height: 90px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .logo-print {
+        max-width: 85px;
+        max-height: 85px;
+      }
+      .title-print {
+        width: 100%;
+        border-bottom: 1px solid #000;
+        border-top: 1px solid #000;
+        margin-top: 20px;
+        text-align: center;
+        background-color: rgb(245, 245, 245);
+        -webkit-print-color-adjust: exact;
+      }
+      .table-product {
+        width: 100%;
+        border-bottom: 1px solid #000;
+      }
+      .table-product thead tr td {
+        font-size: 10px;
+        font-weight: bold;
+        padding: 3px;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+      }
+      .table-product thead tr td:last-child {
+        border-right: none;
+      }
+      .qtd {
+        width: 6%;
+        text-align: center;
+      }
+      .desc {
+        width: 55%;
+      }
+      .unid {
+        width: 6%;
+        text-align: center;
+      }
+      .v-unit {
+        width: 16.5%;
+        text-align: right;
+      }
+      .v-total {
+        width: 16.5%;
+        text-align: right;
+      }
+      .table-product tbody tr td {
+        font-size: 10px;
+        padding: 3px;
+        border-right: 1px solid #000;
+      }
+      .table-product tbody tr td:last-child {
+        border-right: none;
+      }
+      .signature-container {
+        width: 400px;
+        text-align: center;
+        font-size: 12px;
+        margin-top: 70px;
+      }
+      .signature-container p {
+        margin-top: 5px;
+      }
+      .signature {
+        width: 400px;
+        border-bottom: 1px solid #000;
+      }
+      .page-break {
+        display: none;
+      }
+      .btn-print {
+        border: none;
+        padding: 10px;
+        background-color: #f6f6f6;
+        position: fixed;
+        display: block;
+        margin: auto;
+        border-radius: 3px;
+        cursor: pointer;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        font-weight: bold;
+      }
+      .table-pricing {
+        width: 100%;
+        font-size: 10px;
+      }
+      .td-logo {
+        width: 20%;
+        justify-content: center;
+        align-items: center;
+      }
+      .td-company {
+        width: 80%;
+        text-align: center;
+      }
+      .title-company {
+        font-size: 20px !important;
+      }
+      .row {
+        width: 50%;
+        text-align: left;
+      }
+      .row-two {
+        width: 50%;
+        text-align: right;
+      }
+      .row-price {
+        width: 60%;
+        text-align: left;
+      }
+      .row-two-price {
+        width: 40%;
+        text-align: right;
+      }
+      .td-info {
+        width: 75%;
+        border-bottom: 1px solid #000;
+      }
+      .td-contact {
+        width: 25%;
+        text-align: right;
+        border-bottom: 1px solid #000;
+      }
+      .td-obs {
+        width: 60%;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+      }
+      .td-infoorder {
+        width: 40%;
+        border-bottom: 1px solid #000;
+      }
+      .unid {
+        width: 6%;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-print">
+      <table class="table-pricing" cellspacing="0">
+        <tr>
+          <td
+            class="td-logo"
+            style="border-bottom: 1px solid #000; border-top: 1px solid #000"
+          >
+            <div class="logo-container">
+              <img alt="logo" class="logo-print" src="<%= logo %>" />
+            </div>
+          </td>
+          <td
+            class="td-company"
+            style="border-bottom: 1px solid #000; border-top: 1px solid #000"
+          >
+            <h1 class="title-company"><%= company.name %></h1>
+            <p>
+              <strong>END:</strong> <%= company.street %> , <%= company.numer %>
+              , <%= company.bairro %> <strong>CEP:</strong> <%= company.cep %> ,
+              <%= company.city %> - <%= company.state %>
+            </p>
+            <p>
+              <strong>TEL:</strong> <%= company.phoneComercial %> -
+              <strong>EMAIL:</strong> <% if (company.email) { %> <%=
+              company.email %> <% } %>
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <div class="title-print">
+        <h5>PAGAMENTOS, CLIENTE: NATANAEL DOS SANTOS BEZERRA</h5>
+      </div>
+
+      <table style="width: 100%; font-size: 9px" cellspacing="0">
+        <thead
+          style="
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            display: table;
+            width: 100%;
+          "
+        >
+          <tr>
+            <td style="width: 25%">TÍTULO</td>
+            <td style="width: 8%">STATUS</td>
+            <td style="width: 8%; text-align: right">VALOR</td>
+            <td style="width: 8%; text-align: center">VENCIMENTO</td>
+            <td style="width: 8%; text-align: center">LANÇAMENTO</td>
+            <td style="width: 8%; text-align: center">ATRASO</td>
+          </tr>
+        </thead>
+        <tbody style="display: table; width: 100%">
+          <tr
+            style="border-bottom: 1px solid #000; display: table; width: 100%"
+          >
+            <td style="width: 25%">CARTÃO DE CRÉDITO - 0X</td>
+            <td style="width: 8%">EM ABERTO</td>
+            <td style="width: 8%; text-align: right">R$ 200,00</td>
+            <td style="width: 8%; text-align: center">10/10/1900</td>
+            <td style="width: 8%; text-align: center">Dezembro / 2020</td>
+            <td style="width: 7%; text-align: center">21 DIAS</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

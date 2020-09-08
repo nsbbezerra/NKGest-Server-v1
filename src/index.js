@@ -17,6 +17,10 @@ app.use(
   "/pdf",
   express.static(path.resolve(__dirname, "..", "uploads", "pdf"))
 );
+app.use(
+  "/relatorio",
+  express.static(path.resolve(__dirname, "..", "uploads", "relatorio"))
+);
 
 require("./app/controllers/administrativo")(app);
 require("./app/controllers/cadastros")(app);
@@ -34,6 +38,7 @@ require("./app/controllers/nfe")(app);
 require("./app/controllers/nfce")(app);
 require("./app/controllers/xmlImporter")(app);
 require("./app/controllers/printer")(app);
+require("./app/controllers/printRelatorio")(app);
 
 const PORT = 5000;
 const HOST = "0.0.0.0";
