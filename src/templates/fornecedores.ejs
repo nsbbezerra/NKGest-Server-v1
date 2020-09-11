@@ -198,7 +198,7 @@
         <h5>FORNECEDORES</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 6.5px" cellspacing="0">
         <thead
           style="
             font-weight: bold;
@@ -209,23 +209,27 @@
         >
           <tr>
             <td style="width: 25%">NOME</td>
-            <td style="width: 25%">RAZAO SOCIAL</td>
-            <td style="width: 8%; text-align: center">CPF / CNPJ</td>
-            <td style="width: 8%; text-align: center">INSC. ESTADUAL</td>
-            <td style="width: 8%; text-align: center">TELEFONE</td>
-            <td style="width: 8%; text-align: center">EMAIL</td>
+            <td style="width: 20%">RAZAO SOCIAL</td>
+            <td style="width: 15%; text-align: center">CPF / CNPJ</td>
+            <td style="width: 10%; text-align: center">TEL</td>
+            <td style="width: 14%; text-align: center">EMAIL</td>
           </tr>
         </thead>
         <tbody style="display: table; width: 100%">
+          <% if (fornecers.length) { %> <% fornecers.forEach(e => { %>
           <tr
             style="border-bottom: 1px solid #000; display: table; width: 100%"
           >
-            <td style="width: 25%">BORRACHA</td>
-            <td style="width: 25%">NATANAEL DOS SANTOS BEZERRA</td>
-            <td style="width: 8%; text-align: center">01.222.222/0001-00</td>
-            <td style="width: 8%; text-align: center">PC-SI-8907</td>
-            <td style="width: 8%; text-align: center">63 99971-1716</td>
-            <td style="width: 7%; text-align: center">NÃO</td>
+            <td style="width: 25%"><%= e.name %></td>
+            <td style="width: 20%"><%= e.socialName %></td>
+            <td style="width: 15%; text-align: center"><%= e.cpf_cnpj %></td>
+            <td style="width: 10%; text-align: center">
+              <% if (e.phoneComercial) { %> <%= e.phoneComercial %> <% } %>
+            </td>
+            <td style="width: 14%; text-align: center">
+              <% if (e.email) { %> <%= e.email %> <% } %>
+            </td>
+            <% }) %> <% } %>
           </tr>
         </tbody>
       </table>

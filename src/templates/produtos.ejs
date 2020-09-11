@@ -198,7 +198,7 @@
         <h5>PRODUTOS</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 6.5px" cellspacing="0">
         <thead
           style="
             font-weight: bold;
@@ -208,27 +208,42 @@
           "
         >
           <tr>
+            <td style="width: 10%">COD.</td>
             <td style="width: 30%">NOME</td>
             <td style="width: 5%; text-align: center">UN</td>
-            <td style="width: 12%; text-align: center">CÓDIGO</td>
+            <td style="width: 12%; text-align: center">COD.BARRAS</td>
             <td style="width: 10%; text-align: center">SKU</td>
-            <td style="width: 10%; text-align: center">ESTOQUE</td>
-            <td style="width: 12%; text-align: right">PREÇO</td>
+            <td style="width: 7%; text-align: center">ESTOQUE</td>
+            <td style="width: 8%; text-align: right">PREÇO</td>
             <td style="width: 7%; text-align: center">ATIVO?</td>
           </tr>
         </thead>
         <tbody style="display: table; width: 100%">
+          <% products.forEach(e => { %>
           <tr
             style="border-bottom: 1px solid #000; display: table; width: 100%"
           >
-            <td style="width: 30%">BORRACHA</td>
-            <td style="width: 5%; text-align: center">PC</td>
-            <td style="width: 12%; text-align: center">1379182731231</td>
-            <td style="width: 10%; text-align: center">PC-SI-8907</td>
-            <td style="width: 10%; text-align: center">120</td>
-            <td style="width: 12%; text-align: right">R$ 400,00</td>
-            <td style="width: 7%; text-align: center">SIM</td>
+            <td style="width: 10%"><%= e.code %></td>
+            <td style="width: 30%"><%= e.codiname %></td>
+            <td style="width: 5%; text-align: center"><%= e.unMedida %></td>
+            <td style="width: 12%; text-align: center">
+              <%= e.codeUniversal %>
+            </td>
+            <td style="width: 10%; text-align: center">
+              <% if (e.sku) { %> <%= e.sku %> <% } %>
+            </td>
+            <td style="width: 7%; text-align: center"><%= e.estoqueAct %></td>
+            <td style="width: 8%; text-align: right">
+              <%= e.valueSale.toLocaleString('pt-br',{style: 'currency',
+              currency: 'BRL'}) %>
+            </td>
+
+            <td style="width: 7%; text-align: center">
+              <% if (e.active === true) { %> SIM <% } %> <% if (e.active ===
+              false) { %> NÃO <% } %>
+            </td>
           </tr>
+          <% }) %>
         </tbody>
       </table>
     </div>

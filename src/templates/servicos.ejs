@@ -198,7 +198,7 @@
         <h5>SERVIÇOS</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 7px" cellspacing="0">
         <thead
           style="
             font-weight: bold;
@@ -214,13 +214,21 @@
           </tr>
         </thead>
         <tbody style="display: table; width: 100%">
+          <% services.forEach(e => { %>
           <tr
             style="border-bottom: 1px solid #000; display: table; width: 100%"
           >
-            <td style="width: 30%">BORRACHA</td>
-            <td style="width: 12%; text-align: right">R$ 400,00</td>
-            <td style="width: 7%; text-align: center">SIM</td>
+            <td style="width: 30%"><%= e.name %></td>
+            <td style="width: 12%; text-align: right">
+              <%= e.value.toLocaleString('pt-br',{style: 'currency', currency:
+              'BRL'}) %>
+            </td>
+            <td style="width: 7%; text-align: center">
+              <% if (e.active === true) { %> SIM <% } %> <% if (e.active ===
+              false) { %> NÃO <% } %>
+            </td>
           </tr>
+          <% }) %>
         </tbody>
       </table>
     </div>
