@@ -19,8 +19,21 @@ const diferenceInDays = dateFns.differenceInDays;
 
 //** ROTA PARA GERAR RELATÓRIO DE CLIENTES */
 router.post("/clients", async (req, res) => {
+  const { find } = req.body;
   try {
-    const clientes = await Clients.find();
+    var clientes;
+    if (find === 1) {
+      clientes = await Clients.find({ active: true });
+    }
+    if (find === 2) {
+      clientes = await Clients.find({ active: false });
+    }
+    if (find === 3) {
+      clientes = await Clients.find({ restrict: true });
+    }
+    if (find === 4) {
+      clientes = await Clients.find();
+    }
     const company = await Company.findOne();
     const pathToFile = path.resolve(
       __dirname,
@@ -303,9 +316,9 @@ router.post("/contas", async (req, res) => {
   try {
     var contas;
     if (type === "revenues") {
-      contas = await Revenues.find({ month, year });
+      contas = await Revenues.find({ month, year }).sort({ vencimento: 1 });
     } else {
-      contas = await Expenses.find({ month, year });
+      contas = await Expenses.find({ month, year }).sort({ vencimento: 1 });
     }
     const company = await Company.findOne();
     const pathToFile = path.resolve(
@@ -387,7 +400,8 @@ router.post("/contas", async (req, res) => {
 router.post("/payments", async (req, res) => {
   const { type, month, year, client, pay } = req.body;
   try {
-    const clienteFind = await Clients.findOne({ _id: client });
+    let clienteFind =
+      client === "" ? " TODOS" : await Clients.findOne({ _id: client });
     var vendas;
     var ordens;
     if (type === 1) {
@@ -396,35 +410,83 @@ router.post("/payments", async (req, res) => {
         year,
         cliente: client,
         statusPay: pay,
-      }).populate({
-        path: "cliente",
-        select: "name",
-      });
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
       ordens = await PagOrders.find({
         month,
         year,
         cliente: client,
         statusPay: pay,
-      }).populate({
-        path: "cliente",
-        select: "name",
-      });
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
     }
     if (type === 2) {
       vendas = await PagSales.find({
         cliente: client,
         statusPay: pay,
-      }).populate({
-        path: "cliente",
-        select: "name",
-      });
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
       ordens = await PagOrders.find({
         cliente: client,
         statusPay: pay,
-      }).populate({
-        path: "cliente",
-        select: "name",
-      });
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
+    }
+    if (type === 4) {
+      vendas = await PagSales.find({
+        statusPay: pay,
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
+      ordens = await PagOrders.find({
+        statusPay: pay,
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
+    }
+    if (type === 5) {
+      vendas = await PagSales.find({
+        statusPay: pay,
+        month,
+        year,
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
+      ordens = await PagOrders.find({
+        statusPay: pay,
+        month,
+        year,
+      })
+        .populate({
+          path: "cliente",
+          select: "name",
+        })
+        .sort({ dateToPay: 1 });
     }
     const company = await Company.findOne();
     const pathToFile = path.resolve(
@@ -463,14 +525,24 @@ router.post("/payments", async (req, res) => {
       });
       return arra;
     }
-    console.log(await CalculateAtraso(vendas));
+    function defineTipo(t) {
+      switch (t) {
+        case 1:
+          return `PAGAMENTOS DO CLIENTE: ${clienteFind.name} DO MÊS ${month} de ${year}`;
+        case 2:
+          return `PAGAMENTOS DO CLIENTE: ${clienteFind.name}`;
+        case 4:
+          return `TODOS OS PAGAMENTOS`;
+        case 5:
+          return `TODOS OS PAGAMENTOS DO MÊS ${month} de ${year}`;
+        default:
+          return "TODOS OS PAGAMENTOS";
+      }
+    }
     await ejs.renderFile(
       pathToTemplate,
       {
-        tipo:
-          type === 1
-            ? `PAGAMENTOS DO CLIENTE: ${clienteFind.name} DO MÊS ${month} DE ${year}`
-            : `PAGAMENTOS DO CLIENTE: ${clienteFind.name}`,
+        tipo: defineTipo(type),
         company: company,
         vendas: await CalculateAtraso(vendas),
         ordens: await CalculateAtraso(ordens),
@@ -516,6 +588,79 @@ router.post("/payments", async (req, res) => {
       }
     );
     const link = `${configs.logoUrl}/relatorio/debitos.pdf`;
+    return res.status(200).send({ link, vendas, ordens });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .send({ message: "Erro ao gerar o relatório para impressão" });
+  }
+});
+
+router.post("/balancete", async (req, res) => {
+  const { id } = req.body;
+  try {
+    const balancete = await Balancete.findOne({ _id: id });
+    const company = await Company.findOne();
+    const pathToFile = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "uploads",
+      "relatorio"
+    );
+    const pathToTemplate = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "templates",
+      "relatorio.ejs"
+    );
+    await ejs.renderFile(
+      pathToTemplate,
+      {
+        company: company,
+        logo: `${configs.logoUrl}/img/${company.logo}`,
+        entradas: balancete.receives,
+        saidas: balancete.withdraw,
+        balancete: balancete,
+      },
+      (err, html) => {
+        if (err) {
+          console.log("EJS", err);
+          return res
+            .status(400)
+            .send({ message: "Erro ao gerar o relatório para impressão" });
+        } else {
+          pdf
+            .create(html, {
+              format: "A4",
+              orientation: "portrait",
+              border: {
+                bottom: "1cm",
+                top: "1cm",
+                right: "1cm",
+                left: "1cm",
+              },
+              httpHeaders: {
+                "Content-Type": "application/pdf",
+              },
+            })
+            .toFile(`${pathToFile}/relatorio.pdf`, (err, response) => {
+              if (err) {
+                console.log("PDF", err);
+                return res.status(400).send({
+                  message: "Erro ao gerar o relatório para impressão",
+                });
+              } else {
+                console.log("OK");
+              }
+            });
+        }
+      }
+    );
+    const link = `${configs.logoUrl}/relatorio/relatorio.pdf`;
     return res.status(200).send({ link });
   } catch (error) {
     console.log(error);

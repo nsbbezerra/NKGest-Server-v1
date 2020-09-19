@@ -11,8 +11,7 @@
         margin: 0;
         outline: none;
         box-sizing: border-box;
-        font-family: Calibri, "Gill Sans", "Gill Sans MT", "Trebuchet MS",
-          sans-serif !important;
+        font-family: "Roboto", sans-serif;
       }
       html::-webkit-scrollbar {
         display: none;
@@ -42,7 +41,7 @@
         border-bottom: 1px solid #000;
       }
       .table-product thead tr td {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: bold;
         padding: 3px;
         border-bottom: 1px solid #000;
@@ -71,7 +70,7 @@
         text-align: right;
       }
       .table-product tbody tr td {
-        font-size: 10px;
+        font-size: 12px;
         padding: 3px;
         border-right: 1px solid #000;
       }
@@ -108,7 +107,7 @@
       }
       .table-pricing {
         width: 100%;
-        font-size: 10px;
+        font-size: 12px;
       }
       .td-logo {
         width: 20%;
@@ -120,7 +119,7 @@
         text-align: center;
       }
       .title-company {
-        font-size: 20px !important;
+        font-size: 25px !important;
       }
       .row {
         width: 50%;
@@ -202,7 +201,7 @@
         <h5>VENDAS</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 12px" cellspacing="0">
         <thead
           style="
             font-weight: bold;
@@ -231,7 +230,7 @@
               (e.status === 'wait') { %> NÃO <% } %> <% if (e.status === 'pay')
               { %> SIM <% } %>
             </td>
-            <td style="width: 10%">
+            <td style="width: 10%; text-align: center">
               <% if(e.status === 'wait') { %> <%= e.atraso %> dias <% } %>
             </td>
             <td style="width: 17%; text-align: right">
@@ -247,7 +246,7 @@
         <h5>ORDENS DE SERVIÇO</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 12px" cellspacing="0">
         <thead
           style="
             font-weight: bold;
@@ -292,7 +291,7 @@
         <h5>RESUMO</h5>
       </div>
 
-      <table style="width: 100%; font-size: 9px" cellspacing="0">
+      <table style="width: 100%; font-size: 12px" cellspacing="0">
         <tr style="display: table; width: 100%; border-bottom: 1px solid #000">
           <td style="width: 85%">TOTAL DAS VENDAS</td>
           <td style="width: 15%; text-align: right">
