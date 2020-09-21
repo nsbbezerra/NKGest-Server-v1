@@ -43,6 +43,7 @@ router.post("/finder", async (req, res) => {
         finish: "yes",
         month: meses[monthDate],
         year: yearDate,
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client address",
         select:
@@ -55,6 +56,7 @@ router.post("/finder", async (req, res) => {
         finish: "yes",
         month: meses[monthDate],
         year: yearDate,
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client veicles",
         select:
@@ -71,6 +73,7 @@ router.post("/finder", async (req, res) => {
         statuSales: "sale",
         waiting: "none",
         finish: "yes",
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client address",
         select:
@@ -82,6 +85,7 @@ router.post("/finder", async (req, res) => {
         statuSales: "sale",
         waiting: "none",
         finish: "yes",
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client veicles",
         select:
@@ -98,6 +102,7 @@ router.post("/finder", async (req, res) => {
         finish: "yes",
         month: mes,
         year: ano,
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client address",
         select:
@@ -110,6 +115,7 @@ router.post("/finder", async (req, res) => {
         finish: "yes",
         month: mes,
         year: ano,
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client veicles",
         select:
@@ -125,6 +131,7 @@ router.post("/finder", async (req, res) => {
         statuSales: "sale",
         waiting: "none",
         finish: "yes",
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client address",
         select:
@@ -136,6 +143,7 @@ router.post("/finder", async (req, res) => {
         statuSales: "sale",
         waiting: "none",
         finish: "yes",
+        $or: [{ rascunhoNFCE: { $exists: false } }, { rascunhoNFCE: false }],
       }).populate({
         path: "planoDeConta funcionario client veicles",
         select:
@@ -221,8 +229,7 @@ router.post("/nfeRasc", async (req, res) => {
         uf_emitente: company[0].state,
         cep_emitente: company[0].cep,
         inscricao_estadual_emitente: company[0].stateRegistration,
-        nome_destinatario:
-          "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL", //client.name,
+        nome_destinatario: client.name,
         cpf_destinatario: documentClient,
         telefone_destinatario: phoneClient,
         logradouro_destinatario: address.street,
@@ -255,8 +262,7 @@ router.post("/nfeRasc", async (req, res) => {
         uf_emitente: company[0].state,
         cep_emitente: company[0].cep,
         inscricao_estadual_emitente: company[0].stateRegistration,
-        nome_destinatario:
-          "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL", //client.name,
+        nome_destinatario: client.name,
         cnpj_destinatario: documentClient,
         telefone_destinatario: phoneClient,
         logradouro_destinatario: address.street,
@@ -427,7 +433,9 @@ router.post("/nfeRasc", async (req, res) => {
       await NFE.update({ _id: nfeRasc._id }, { $push: { items: info } });
     }
 
-    await Vendas.findByIdAndUpdate(sale._id, { $set: { rascunhoNFE: true } });
+    await Vendas.findByIdAndUpdate(sale._id, {
+      $set: { rascunhoNFE: true, nfe: true },
+    });
 
     let rascunhoId = nfeRasc._id;
 
