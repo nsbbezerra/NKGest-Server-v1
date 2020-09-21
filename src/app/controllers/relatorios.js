@@ -875,15 +875,13 @@ router.post("/listClients", async (req, res) => {
       const totalBlock = await Clientes.find({ active: false }).count();
       const totalRestrict = await Clientes.find({ restrict: true }).count();
       const totalClients = await Clientes.find().count();
-      return res
-        .status(200)
-        .send({
-          clients,
-          totalActive,
-          totalBlock,
-          totalRestrict,
-          totalClients,
-        });
+      return res.status(200).send({
+        clients,
+        totalActive,
+        totalBlock,
+        totalRestrict,
+        totalClients,
+      });
     }
     if (find === 2) {
       const clients = await Clientes.find({ active: false }).sort({ name: 1 });
@@ -891,15 +889,13 @@ router.post("/listClients", async (req, res) => {
       const totalBlock = await Clientes.find({ active: false }).count();
       const totalRestrict = await Clientes.find({ restrict: true }).count();
       const totalClients = await Clientes.find().count();
-      return res
-        .status(200)
-        .send({
-          clients,
-          totalActive,
-          totalBlock,
-          totalRestrict,
-          totalClients,
-        });
+      return res.status(200).send({
+        clients,
+        totalActive,
+        totalBlock,
+        totalRestrict,
+        totalClients,
+      });
     }
     if (find === 3) {
       const clients = await Clientes.find({ restrict: true }).sort({ name: 1 });
@@ -907,15 +903,13 @@ router.post("/listClients", async (req, res) => {
       const totalBlock = await Clientes.find({ active: false }).count();
       const totalRestrict = await Clientes.find({ restrict: true }).count();
       const totalClients = await Clientes.find().count();
-      return res
-        .status(200)
-        .send({
-          clients,
-          totalActive,
-          totalBlock,
-          totalRestrict,
-          totalClients,
-        });
+      return res.status(200).send({
+        clients,
+        totalActive,
+        totalBlock,
+        totalRestrict,
+        totalClients,
+      });
     }
     if (find === 4) {
       const clients = await Clientes.find().sort({ name: 1 });
@@ -923,15 +917,13 @@ router.post("/listClients", async (req, res) => {
       const totalBlock = await Clientes.find({ active: false }).count();
       const totalRestrict = await Clientes.find({ restrict: true }).count();
       const totalClients = await Clientes.find().count();
-      return res
-        .status(200)
-        .send({
-          clients,
-          totalActive,
-          totalBlock,
-          totalRestrict,
-          totalClients,
-        });
+      return res.status(200).send({
+        clients,
+        totalActive,
+        totalBlock,
+        totalRestrict,
+        totalClients,
+      });
     }
   } catch (error) {
     return res.status(400).send({ message: "Erro ao processar a requisição" });
@@ -1081,7 +1073,7 @@ router.post("/listServices", async (req, res) => {
 
 //Rota para criar o relatório financeiro
 router.post("/createBalancete", async (req, res) => {
-  const { mes, ano } = req.body;
+  const { mes, ano, useSaldo } = req.body;
 
   const dataCadastro = dateFns.format(
     new Date(yearDate, monthDate - 1, dayDate),
@@ -1214,10 +1206,14 @@ router.post("/createBalancete", async (req, res) => {
 
     var saldoAnterior;
 
-    if (!getSaldoAnterior.length) {
-      saldoAnterior = 0;
+    if (useSaldo === true) {
+      if (!getSaldoAnterior.length) {
+        saldoAnterior = 0;
+      } else {
+        saldoAnterior = getSaldoAnterior[0].saldoAtual;
+      }
     } else {
-      saldoAnterior = getSaldoAnterior[0].saldoAtual;
+      saldoAnterior = 0;
     }
 
     var totalEntradas = Deposits.filter((services) => {
@@ -1523,18 +1519,16 @@ router.post("/fluxCashier", async (req, res) => {
         return sum + verify.value;
       }, 0);
 
-      return res
-        .status(200)
-        .send({
-          products,
-          calcTotalProductSale,
-          services,
-          calcTotalServices,
-          receitas,
-          calcTotalReceitas,
-          despesas,
-          calcTotalDespesas,
-        });
+      return res.status(200).send({
+        products,
+        calcTotalProductSale,
+        services,
+        calcTotalServices,
+        receitas,
+        calcTotalReceitas,
+        despesas,
+        calcTotalDespesas,
+      });
     }
 
     //BUSCA POR PERÍODO
@@ -1618,18 +1612,16 @@ router.post("/fluxCashier", async (req, res) => {
         return sum + verify.value;
       }, 0);
 
-      return res
-        .status(200)
-        .send({
-          products,
-          calcTotalProductSale,
-          services,
-          calcTotalServices,
-          receitas,
-          calcTotalReceitas,
-          despesas,
-          calcTotalDespesas,
-        });
+      return res.status(200).send({
+        products,
+        calcTotalProductSale,
+        services,
+        calcTotalServices,
+        receitas,
+        calcTotalReceitas,
+        despesas,
+        calcTotalDespesas,
+      });
     }
   } catch (error) {
     return res.status(400).send({ message: "Erro ao buscar as informações" });

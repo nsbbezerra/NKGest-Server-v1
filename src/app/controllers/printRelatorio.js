@@ -21,7 +21,7 @@ const diferenceInDays = dateFns.differenceInDays;
 router.post("/clients", async (req, res) => {
   const { find } = req.body;
   try {
-    var clientes;
+    let clientes;
     if (find === 1) {
       clientes = await Clients.find({ active: true });
     }
@@ -102,8 +102,23 @@ router.post("/clients", async (req, res) => {
 });
 
 router.post("/products", async (req, res) => {
+  const { find } = req.body;
   try {
-    const clientes = await Products.find();
+    let clientes;
+    if (find === 1) {
+      clientes = await Products.find({ active: true }).sort({ name: 1 });
+    }
+    if (find === 2) {
+      clientes = await Products.find({ active: false }).sort({ name: 1 });
+    }
+    if (find === 3) {
+      clientes = await Products.find({ estoqueAct: { $lte: 5 } }).sort({
+        name: 1,
+      });
+    }
+    if (find === 4) {
+      clientes = await Products.find().sort({ name: 1 });
+    }
     const company = await Company.findOne();
     const pathToFile = path.resolve(
       __dirname,
@@ -172,8 +187,18 @@ router.post("/products", async (req, res) => {
 });
 
 router.post("/services", async (req, res) => {
+  const { find } = req.body;
   try {
-    const clientes = await Services.find();
+    let clientes;
+    if (find === 1) {
+      clientes = await Services.find({ active: true }).sort({ name: 1 });
+    }
+    if (find === 2) {
+      clientes = await Services.find({ active: false }).sort({ name: 1 });
+    }
+    if (find === 3) {
+      clientes = await Services.find().sort({ name: 1 });
+    }
     const company = await Company.findOne();
     const pathToFile = path.resolve(
       __dirname,
