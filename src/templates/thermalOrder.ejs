@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imprimir Venda</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        outline: none;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+      }
+      html::-webkit-scrollbar {
+        display: none;
+      }
+      .logo-container {
+        width: 100%;
+        height: 90px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .logo-print {
+        max-width: 85px;
+        max-height: 85px;
+      }
+      .title-print {
+        width: 100%;
+        font-size: 8px;
+        text-align: center;
+
+        -webkit-print-color-adjust: exact;
+      }
+      .table-product {
+        width: 100%;
+      }
+      .table-product thead tr td {
+        font-size: 6px;
+        font-weight: bold;
+        padding: 3px;
+      }
+      .table-product thead tr td:last-child {
+        border-right: none;
+      }
+      .qtd {
+        width: 6%;
+        text-align: center;
+      }
+      .desc {
+        width: 55%;
+      }
+      .unid {
+        width: 6%;
+        text-align: center;
+      }
+      .v-unit {
+        width: 16.5%;
+        text-align: right;
+      }
+      .v-total {
+        width: 16.5%;
+        text-align: right;
+      }
+      .table-product tbody tr td {
+        font-size: 6px;
+        padding: 3px;
+      }
+      .table-product tbody tr td:last-child {
+        border-right: none;
+      }
+      .signature-container {
+        width: 400px;
+        text-align: center;
+        font-size: 6px;
+        margin-top: 70px;
+      }
+      .signature-container p {
+        margin-top: 5px;
+      }
+      .signature {
+        width: 400px;
+      }
+      .page-break {
+        display: none;
+      }
+      .btn-print {
+        border: none;
+        padding: 10px;
+        background-color: #f6f6f6;
+        position: fixed;
+        display: block;
+        margin: auto;
+        border-radius: 3px;
+        cursor: pointer;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        font-weight: bold;
+      }
+      .table-pricing {
+        width: 100%;
+        font-size: 6px;
+        margin-top: 15px;
+      }
+      .td-logo {
+        width: 20%;
+        justify-content: center;
+        align-items: center;
+      }
+      .td-company {
+        width: 80%;
+        text-align: center;
+      }
+      .title-company {
+        font-size: 9px !important;
+        margin-top: 5px;
+      }
+      .row {
+        width: 50%;
+        text-align: left;
+      }
+      .row-two {
+        width: 50%;
+        text-align: right;
+      }
+      .row-price {
+        width: 50%;
+        text-align: left;
+      }
+      .row-two-price {
+        width: 50%;
+        text-align: right;
+      }
+      .td-info {
+        width: 75%;
+      }
+      .td-contact {
+        width: 25%;
+        text-align: right;
+      }
+      .td-obs {
+        width: 60%;
+      }
+      .td-infoorder {
+        width: 40%;
+      }
+      .unid {
+        width: 6%;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-print">
+      <table class="table-pricing" cellspacing="0">
+        <tr>
+          <td class="td-company" style="margin-bottom: 5px">
+            <h1 class="title-company"><%= company.name %></h1>
+            <p>
+              <strong>END:</strong> <%= company.street %> , <%= company.numer %>
+              , <%= company.bairro %> <strong>CEP:</strong> <%= company.cep %> ,
+              <%= company.city %> - <%= company.state %>
+            </p>
+            <p>
+              <strong>TEL:</strong> <%= company.phoneComercial %> -
+              <strong>EMAIL:</strong> <% if (company.email) { %> <%=
+              company.email %> <% } %>
+            </p>
+            <table
+              class="table-pricing"
+              cellspacing="0"
+              style="margin-top: 10px"
+            >
+              <tr>
+                <td class="row">NÚMERO DA VENDA: <%= sale.number %></td>
+              </tr>
+              <tr>
+                <td class="row">DATA: <%= sale.createDate %></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <div class="client-container">
+        <table class="table-pricing" cellspacing="0" style="margin-top: 7px">
+          <tr>
+            <td class="td-info">
+              <p>CLIENTE: <%= client.name %></p>
+              <% if (address) { %>
+              <p>
+                END: <%= address.street %> , <%= address.number %> , <%=
+                address.bairro %> , <%= address.city %> - <%= address.state %>
+              </p>
+              <% } %> <% if (client.phoneComercial) { %>
+              <p>TEL: <%= client.phoneComercial %></p>
+              <% } %> <% if (client.celOne) { %>
+              <p>CEL: <%= client.celOne %></p>
+              <% } %> <% if (client.celTwo) { %>
+              <p>CEL: <%= client.celTwo %></p>
+              <% } %>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="title-print" style="margin-top: 15px">
+        <h5>PRODUTOS</h5>
+      </div>
+
+      <table class="table-product" cellspacing="0">
+        <thead>
+          <tr>
+            <td class="qtd">QTD</td>
+            <td class="desc">DESCRIÇÃO</td>
+            <td class="unid">UNI</td>
+            <td class="v-unit">V. UNIT</td>
+            <td class="v-total">V. TOTAL</td>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% products.forEach(e => { %>
+          <tr>
+            <td class="qtd"><%= e.quantity %></td>
+            <td class="desc"><%= e.name %></td>
+            <td class="unid"><%= e.unidade %></td>
+            <td class="v-unit">
+              <%= e.valueUnit.toLocaleString('pt-br', {minimumFractionDigits:
+              2}) %>
+            </td>
+            <td class="v-total">
+              <%= e.valueTotal.toLocaleString('pt-br', {minimumFractionDigits:
+              2}) %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="resume-container" style="margin-top: 15px">
+        <table class="table-pricing" style="width: 100% !important">
+          <tr>
+            <td class="row-price">SUBTOTAL</td>
+            <td class="row-two-price" style="font-weight: bold">
+              <%= sale.valueBruto.toLocaleString('pt-br',{style: 'currency',
+              currency: 'BRL'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td class="row-price">DESCONTO</td>
+            <td class="row-two-price" style="font-weight: bold">
+              <%= sale.desconto %> %
+            </td>
+          </tr>
+          <tr>
+            <td class="row-price">TOTAL A PAGAR</td>
+            <td class="row-two-price" style="font-weight: bold">
+              <%= sale.valueLiquido.toLocaleString('pt-br',{style: 'currency',
+              currency: 'BRL'}) %>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <% if (payments.length) { %>
+      <table style="width: 100%">
+        <tr>
+          <td style="width: 100%">
+            <h5 style="font-size: 6px; margin-top: 10px">
+              FORMA DE PAGAMENTO:
+            </h5>
+            <table cellspacing="0" style="font-size: 6px; width: 100%">
+              <tr>
+                <td style="width: 110px; font-weight: bold">TIPO</td>
+                <td style="width: 105px; font-weight: bold; text-align: center">
+                  QTD DE PARCELAS
+                </td>
+                <td style="font-weight: bold; text-align: right">VALOR</td>
+              </tr>
+              <% payments.forEach(e => { %>
+              <tr>
+                <td><%= e.paymentName %></td>
+                <td style="text-align: center"><%= e.paymentParcela %></td>
+                <td style="text-align: right">
+                  <%= e.paymentValue.toLocaleString('pt-br',{style: 'currency',
+                  currency: 'BRL'}) %>
+                </td>
+              </tr>
+              <% }) %>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <% } %>
+    </div>
+  </body>
+</html>
