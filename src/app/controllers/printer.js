@@ -249,7 +249,7 @@ router.post("/order", async (req, res) => {
               );
           } else {
             var initialHeight = 11;
-            const length = sale.products.length;
+            const length = sale.services.length;
             if (length > 1) {
               for (let index = 0; index < length; index++) {
                 initialHeight = initialHeight + 0.5;
