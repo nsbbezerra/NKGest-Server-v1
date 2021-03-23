@@ -65,19 +65,28 @@ const ProdutoSchema = new Schema({
     type: String,
     required: true,
   },
+  valueTotalTrib: Number, //vTotTrib
   icms: {
     rate: Number,
     origin: String,
     csosn: String,
-    icmsSTRate: Number,
-    icmsMargemValorAddST: Number,
-    icmsSTModBC: String,
+    icmsSTRate: Number, //pICMSST
+    icmsMargemValorAddST: Number, //pMVAST
+    icmsSTModBC: String, //modBCST
+    icmsModBC: String, //modBC
+    icmsValue: Number, //vICMS
+    icmsValueSt: Number, //vICMSST
     fcpRate: Number,
     fcpSTRate: Number,
     fcpRetRate: Number,
     ipiCst: String,
     ipiRate: Number,
     ipiCode: String,
+    icmsBaseCalc: Number, //vBC
+    icmsBaseCalcRet: Number,
+    icmsBaseCalcSt: Number, //vBCST
+    icmsRedBaseCalc: Number,
+    icmsRedBaseCalcSt: Number,
   },
   pis: {
     rate: Number,

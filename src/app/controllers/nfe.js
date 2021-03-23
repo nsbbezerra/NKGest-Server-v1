@@ -416,6 +416,12 @@ router.post("/nfeRasc", async (req, res) => {
         cofins_situacao_tributaria: cofinsCst,
         valor_desconto: desc,
 
+        icms_valor: result.icms.icmsValue,
+        icms_modalidade_base_calculo: result.icms.icmsModBC,
+        icms_base_calculo_st: result.icms.icmsBaseCalcSt,
+        icms_base_calculo: result.icms.icmsBaseCalc,
+        icms_valor_st: result.icms.icmsValueSt,
+
         icms_aliquota: icmsRate,
         icms_modalidade_base_calculo_st: icmsMdBC,
         icms_margem_valor_adicionado_st: stMva,

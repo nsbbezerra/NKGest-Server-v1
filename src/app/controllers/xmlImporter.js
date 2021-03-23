@@ -74,10 +74,10 @@ router.post("/importXml", upload.single("xml"), async (req, res) => {
       let icms = item.imposto().icms();
       let pis = item.imposto().pis();
       let cofins = item.imposto().cofins();
-      let nomeXml = await attrsIPI.find(
-        (obj) => obj.prod.xProd._text === item.descricao()
-      );
-      let ipi = nomeXml ? nomeXml.imposto.IPI : "";
+      let nomeXml = (await attrsIPI.length)
+        ? attrsIPI.find((obj) => obj.prod.xProd._text === item.descricao())
+        : attrsIPI;
+      let ipi = nomeXml.imposto.IPI ? nomeXml.imposto.IPI : "";
       let cstIpi = ipi !== "" ? ipi.IPITrib.CST._text : "";
       let ipiRate = ipi !== "" ? ipi.IPITrib.pIPI._text : 0;
       let codeIpi = ipi !== "" ? ipi.cEnq._text : "";
@@ -122,6 +122,10 @@ router.post("/importXml", upload.single("xml"), async (req, res) => {
           baseCalculoFcp: parseFloat(icms.baseCalculoFCP()),
           baseCalculoFcpSt: parseFloat(icms.baseCalculoFCPST()),
           baseCalculoFcpRetido: parseFloat(icms.baseCalculoFCPSTRetido()),
+          icmsValue: parseFloat(icms.valorIcms()),
+          icmsValueSt: parseFloat(icms.valorIcmsST()),
+          icmsBaseCalc: parseFloat(icms.baseCalculo()),
+          icmsBaseCalcSt: parseFloat(icms.baseCalculoIcmsST()),
         },
         pis: {
           pisCst: pis.cst(),
@@ -219,17 +223,19 @@ router.post("/saveProducts", async (req, res) => {
       let FCPPercent;
       let FCPSTPercent;
       let FCPRetPercent;
-      let pisBC;
-      let pisValue;
       let pisPercent;
-      let cofinsBC;
-      let cofinsValue;
       let cofinsPercent;
       let valueFrete;
       let csosnIcms = "";
       let ipiCstVal;
       let ipiRateVal;
       let ipiCode;
+      let icmsValue = !prod.icms.icmsValue ? 0 : prod.icms.icmsValue;
+      let icmsValueSt = !prod.icms.icmsValueSt ? 0 : prod.icms.icmsValueSt;
+      let icmsBaseCalc = !prod.icms.icmsBaseCalc ? 0 : prod.icms.icmsBaseCalc;
+      let icmsBaseCalcSt = !prod.icms.icmsBaseCalcSt
+        ? 0
+        : prod.icms.icmsBaseCalcSt;
       otherExpenses = !prod.outrasDespesas ? 0 : prod.outrasDespesas;
       icmsPercent = !prod.icms.icmsPorcentagem ? 0 : prod.icms.icmsPorcentagem;
       icmsSTPercent = !prod.icms.icmsAliquotaSt ? 0 : prod.icms.icmsAliquotaSt;
@@ -254,43 +260,9 @@ router.post("/saveProducts", async (req, res) => {
       ipiRateVal = !prod.ipi.rate ? 0 : prod.ipi.rate;
 
       if (prod.icms.icmsCst === "") {
-        if (
-          prod.icms.icmsCsosn === "201" ||
-          prod.icms.icmsCsosn === "202" ||
-          prod.icms.icmsCsosn === "203"
-        ) {
-          csosnIcms = 500;
-        } else {
-          csosnIcms = prod.icms.icmsCsosn;
-        }
+        csosnIcms = prod.icms.icmsCsosn;
       } else {
-        if (prod.icms.icmsCst === "00") {
-          csosnIcms = 102;
-        }
-        if (prod.icms.icmsCst === "10") {
-          csosnIcms = 500;
-        }
-        if (prod.icms.icmsCst === "30") {
-          csosnIcms = 500;
-        }
-        if (prod.icms.icmsCst === "40") {
-          csosnIcms = 300;
-        }
-        if (prod.icms.icmsCst === "41") {
-          csosnIcms = 400;
-        }
-        if (prod.icms.icmsCst === "60") {
-          csosnIcms = 500;
-        }
-        if (prod.icms.icmsCst === "50" || prod.icms.icmsCst === "51") {
-          csosnIcms = 103;
-        }
-        if (prod.icms.icmsCst === "70") {
-          csosnIcms = 203;
-        }
-        if (prod.icms.icmsCst === "20") {
-          csosnIcms = 103;
-        }
+        csosnIcms = prod.icms.icmsCst;
       }
 
       let cofins = await { rate: cofinsPercent, cst: prod.cofins.cofinsCst };
@@ -308,6 +280,10 @@ router.post("/saveProducts", async (req, res) => {
         ipiCst: ipiCstVal,
         ipiRate: ipiRateVal,
         ipiCode: ipiCode,
+        icmsValue,
+        icmsValueSt,
+        icmsBaseCalc,
+        icmsBaseCalcSt,
       };
       const resultProduct = await allProducts.find(
         (obj) => obj.name === prod.nome
