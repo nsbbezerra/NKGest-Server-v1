@@ -77,7 +77,7 @@ router.post("/importXml", upload.single("xml"), async (req, res) => {
       let nomeXml = (await attrsIPI.length)
         ? attrsIPI.find((obj) => obj.prod.xProd._text === item.descricao())
         : attrsIPI;
-      let ipi = nomeXml.imposto.IPI ? nomeXml.imposto.IPI : "";
+      let ipi = nomeXml?.imposto?.IPI ? nomeXml?.imposto?.IPI : "";
       let cstIpi = ipi !== "" ? ipi.IPITrib.CST._text : "";
       let ipiRate = ipi !== "" ? ipi.IPITrib.pIPI._text : 0;
       let codeIpi = ipi !== "" ? ipi.cEnq._text : "";
