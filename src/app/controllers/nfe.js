@@ -676,7 +676,7 @@ router.post("/statusNfe", async (req, res) => {
   const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
   const request = new XMLHttpRequest();
 
-  const { ref, mode } = req.body;
+  const { ref } = req.body;
 
   try {
     let referencia;
@@ -684,7 +684,7 @@ router.post("/statusNfe", async (req, res) => {
     const venda = await Vendas.findOne({ _id: ref });
     const rasc = await NFE.findOne({ sale: ref });
 
-    if (mode === "id") {
+    if (venda.devolve === true) {
       referencia = rasc._id;
     } else {
       referencia = venda._id;
@@ -699,6 +699,79 @@ router.post("/statusNfe", async (req, res) => {
     const response = JSON.parse(request.responseText);
 
     console.log(response);
+
+    if (response.codigo === "nao_encontrado") {
+      if (referencia === rasc._id) {
+        referencia = venda._id;
+      } else {
+        referencia = rasc._id;
+      }
+      let urlNfe = `${NfeConfig.url}/v2/nfe/${referencia}?completa=(1)`;
+
+      await request.open("GET", urlNfe, false, NfeConfig.token);
+
+      await request.send();
+
+      const response = JSON.parse(request.responseText);
+
+      console.log("CODIGO", response);
+
+      let info = response.status;
+
+      if (info === "processando_autorizacao") {
+        await Vendas.findByIdAndUpdate(ref, { $set: { nfeStatus: info } });
+        return res.status(200).send({
+          message:
+            "Aguarde alguns instantes, a NFE está sendo processada pela SEFAZ",
+          info,
+        });
+      }
+      if (info === "autorizado") {
+        let danfeUrl = `${NfeConfig.url}${response.caminho_danfe}`;
+        let xmlUrl = `${NfeConfig.url}${response.caminho_xml_nota_fiscal}`;
+        await Vendas.findByIdAndUpdate(ref, {
+          $set: { nfeStatus: info, nfeDanfeUrl: danfeUrl, nfeXmlUrl: xmlUrl },
+        });
+        return res
+          .status(200)
+          .send({ message: "NFE Autorizada", info, danfeUrl, xmlUrl });
+      }
+      if (info === "erro_autorizacao") {
+        let statuSefaz = response.status_sefaz;
+        let messageSafaz = response.mensagem_sefaz;
+        await Vendas.findByIdAndUpdate(ref, { $set: { nfeStatus: info } });
+        return res.status(200).send({
+          message: "Houve um erro de autorização por parte da SEFAZ",
+          statuSefaz,
+          messageSafaz,
+          info,
+        });
+      }
+      if (info === "cancelado") {
+        let xmlCancUrlNFe = `${NfeConfig.url}${response.caminho_xml_cancelamento}`;
+        let statuSefaz = response.status_sefaz;
+        let messageSafaz = response.mensagem_sefaz;
+        await Vendas.findByIdAndUpdate(ref, {
+          $set: { nfeStatus: info, xmlCancUrl: xmlCancUrlNFe },
+        });
+        return res.status(200).send({
+          message: "Esta NFE foi cancelada.",
+          statuSefaz,
+          messageSafaz,
+          info,
+        });
+      }
+      if (info === "denegado") {
+        await Vendas.findByIdAndUpdate(ref, { $set: { nfeStatus: info } });
+        return res.status(200).send({
+          message:
+            "Houve uma inconsistência nos dados cadastrais, a NFE foi denegada pela SEFAZ",
+          info,
+        });
+      }
+
+      return res.status(200).send({ response });
+    }
 
     let info = response.status;
 
