@@ -676,7 +676,7 @@ router.post("/statusNfe", async (req, res) => {
   const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
   const request = new XMLHttpRequest();
 
-  const { ref } = req.body;
+  const { ref, mode } = req.body;
 
   try {
     let referencia;
@@ -684,7 +684,7 @@ router.post("/statusNfe", async (req, res) => {
     const venda = await Vendas.findOne({ _id: ref });
     const rasc = await NFE.findOne({ sale: ref });
 
-    if (venda.devolve === true) {
+    if (mode === "id") {
       referencia = rasc._id;
     } else {
       referencia = venda._id;
@@ -835,16 +835,8 @@ router.post("/cancelNfe", async (req, res) => {
 
 //Rota para gerar rascunho de nota de devolução
 router.post("/nfeRascDev", async (req, res) => {
-  const {
-    venda,
-    cfop,
-    natOpe,
-    keyNfe,
-    docType,
-    finality,
-    obs,
-    icmsCst,
-  } = req.body;
+  const { venda, cfop, natOpe, keyNfe, docType, finality, obs, icmsCst } =
+    req.body;
 
   try {
     let info = { chave_nfe: keyNfe };
