@@ -494,7 +494,7 @@ router.post("/nfe", async (req, res) => {
 
   try {
     let information = { chave_nfe: chave_nfe };
-    const nfeRas = await NFE.findOneAndUpdate(
+    const nfe = await NFE.findOneAndUpdate(
       { sale: id },
       {
         $set: {
@@ -533,6 +533,33 @@ router.post("/nfe", async (req, res) => {
       { new: true }
     );
 
+    const icms_base_calculo = nfe.items.reduce(
+      (partialSum, a) => partialSum + a?.icms_base_calculo || 0,
+      0
+    );
+    const icms_valor_total = nfe.items.reduce(
+      (partialSum, a) => partialSum + a?.icms_valor || 0,
+      0
+    );
+    const icms_base_calculo_st = nfe.items.reduce(
+      (partialSum, a) => partialSum + a?.icms_base_calculo_st || 0,
+      0
+    );
+    const icms_valor_total_st = nfe.items.reduce(
+      (partialSum, a) => partialSum + a?.icms_valor_st || 0,
+      0
+    );
+
+    const nfeRas = {
+      ...nfe,
+      icms_base_calculo,
+      icms_valor_total,
+      icms_base_calculo_st,
+      icms_valor_total_st,
+    };
+
+    return res.status(200).send({ message: "OK", nfeRas });
+
     let urlNfe = `${NfeConfig.url}/v2/nfe?ref=${nfeRas.sale}`;
 
     await request.open("POST", urlNfe, false, NfeConfig.token);
@@ -540,8 +567,6 @@ router.post("/nfe", async (req, res) => {
     await request.send(JSON.stringify(nfeRas));
 
     const response = JSON.parse(request.responseText);
-
-    console.log(response);
 
     const statusResponse = response.status;
     const warning = response.codigo;
